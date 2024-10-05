@@ -84,6 +84,18 @@
         .apply-button:hover { background-color: #0078b0; }
         #teaserCard .job-description { padding: 20px; }
         #teaserCard h3 { color: #00A0E9; }
+        .back-button {
+            background-color: #f0f0f0;
+            border: none;
+            padding: 10px 15px;
+            margin: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            color: #00A0E9;
+        }
+        .back-button:hover {
+            background-color: #e0e0e0;
+        }
     </style>
 </head>
 <body>
@@ -139,7 +151,7 @@
     </form>
 
     <div id="teaserPreview"></div>
-    <div id="teaserCard"></div>
+    <div id="teaserCard" style="display: none;"></div>
 
     <script>
         document.getElementById('jobForm').addEventListener('submit', function(e) {
@@ -207,7 +219,7 @@
                             <p>${tab.content.replace(/\n/g, '<br>')}</p>
                         </div>
                     `).join('')}
-                    <a href="${formData.get('applyUrl')}" class="apply-button" target="_blank">Apply Now</a>
+                    <a href="#" class="apply-button" onclick="showCard()">Learn More</a>
                 </div>
             `;
         }
@@ -215,6 +227,7 @@
         function generateCardHTML(formData) {
             return `
                 <div class="job-teaser">
+                    <button onclick="showTeaser()" class="back-button">← Back to Teaser</button>
                     <div class="job-header">
                         <img src="${formData.get('logoUrl')}" alt="${formData.get('companyName')} Logo" class="job-logo">
                         <div>
@@ -242,7 +255,6 @@
             const tabContents = document.querySelectorAll('.tab-content');
             let currentTab = 0;
             const tabDuration = 2000; // 2 seconds per tab
-            let loopCount = 0;
 
             function showTab(index) {
                 tabs.forEach(tab => tab.classList.remove('active'));
@@ -254,18 +266,26 @@
             function nextTab() {
                 currentTab = (currentTab + 1) % tabs.length;
                 showTab(currentTab);
-                
-                if (currentTab === 0) {
-                    loopCount++;
-                }
-                
-                if (loopCount === 1 && currentTab === 0) {
-                    clearInterval(intervalId); // Stop after one full loop
-                }
             }
 
             showTab(0); // Show the first tab immediately
-            const intervalId = setInterval(nextTab, tabDuration);
+            setInterval(nextTab, tabDuration);
+        }
+
+        document.getElementById('teaserPreview').addEventListener('click', function(e) {
+            if (e.target.classList.contains('tab')) {
+                showCard();
+            }
+        });
+
+        function showCard() {
+            document.getElementById('teaserPreview').style.display = 'none';
+            document.getElementById('teaserCard').style.display = 'block';
+        }
+
+        function showTeaser() {
+            document.getElementById('teaserPreview').style.display = 'block';
+            document.getElementById('teaserCard').style.display = 'none';
         }
     </script>
 </body>
